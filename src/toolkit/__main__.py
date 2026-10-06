@@ -40,8 +40,12 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def format_result(value: float) -> str:
-    """Показывает число без хвостовых нулей: 2.0 как 2, 2.5 как 2.5."""
+def format_result(value: int | float) -> str:
+    """Показывает число без хвостовых нулей: 2.0 как 2, 2.5 как 2.5.
+    Целое печатается целиком. Через float большое целое потеряло бы цифры.
+    """
+    if isinstance(value, int):
+        return str(value)
     rounded = round(value, 10)
     if rounded == 0:
         return "0"

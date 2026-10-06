@@ -4,6 +4,7 @@ from toolkit.constants import BINARY_OPERATORS, NUMBER, OPERATOR, UNARY_SIGNS
 from toolkit.errors import CalculatorError
 
 Token = tuple[str, str]
+Number = int | float
 
 
 def tokenize(expression: str) -> list[Token]:
@@ -58,7 +59,7 @@ def validate(tokens: list[Token]) -> None:
         raise CalculatorError("Пропущен операнд")
 
 
-def calculate(tokens: list[Token]) -> float:
+def calculate(tokens: list[Token]) -> Number:
     """Считает уже проверенные токены.
 
     Сначала умножение и деление, потом сложение и вычитание.
@@ -72,7 +73,7 @@ def calculate(tokens: list[Token]) -> float:
     return result
 
 
-def evaluate(expression: str) -> float:
+def evaluate(expression: str) -> Number:
     """Считает выражение целиком: разбор, проверка, вычисление."""
     tokens = tokenize(expression)
     validate(tokens)
@@ -102,12 +103,13 @@ def _read_number(expression: str, index: int) -> tuple[str, int]:
     return expression[start:index], index
 
 
-def _apply_unary(tokens: list[Token]) -> tuple[list[float], list[str]]:
+def _apply_unary(tokens: list[Token]) -> tuple[list[Number], list[str]]:
     """Приклеивает унарные плюс и минус к числу.
 
-    Пример: 2 * -3 становится числами [2.0, -3.0] и оператором ['*'].
+        Пример: 2 * -3 становится числами [2, -3] и оператором ['*'].
+    Целое остаётся int, число с точкой становится float.
     """
-    numbers: list[float] = []
+    numbers: list[Number] = []
     operators: list[str] = []
     index = 0
     expect_number = True
@@ -120,7 +122,7 @@ def _apply_unary(tokens: list[Token]) -> tuple[list[float], list[str]]:
             index += 1
             continue
 
-        sign = 1.0
+        sign = 1
         while kind == OPERATOR:
             if value == "-":
                 sign = -sign
@@ -129,7 +131,8 @@ def _apply_unary(tokens: list[Token]) -> tuple[list[float], list[str]]:
                 raise CalculatorError("Пропущен операнд")
             kind, value = tokens[index]
 
-        numbers.append(sign * float(value))
+        number: Number = float(value) if "." in value else int(value)
+        numbers.append(sign * number)
         expect_number = False
         index += 1
 
@@ -139,9 +142,9 @@ def _apply_unary(tokens: list[Token]) -> tuple[list[float], list[str]]:
 
 
 def _collapse_high_priority(
-    numbers: list[float],
+    numbers: list[Number],
     operators: list[str],
-) -> tuple[list[float], list[str]]:
+) -> tuple[list[Number], list[str]]:
     """Сворачивает * и /. Плюс и минус оставляет на второй проход."""
     collapsed_numbers = [numbers[0]]
     collapsed_operators: list[str] = []
@@ -157,7 +160,7 @@ def _collapse_high_priority(
     return collapsed_numbers, collapsed_operators
 
 
-def _apply(left: float, operator: str, right: float) -> float:
+def _apply(left: Number, operator: str, right: Number) -> float:
     """Применяет один оператор к двум уже известным числам."""
     if operator == "+":
         return left + right

@@ -55,6 +55,13 @@ def test_tokenize_keeps_numbers_and_operators():
     ]
 
 
+def test_huge_integers_keep_all_digits():
+    # float хранит примерно 15 цифр, поэтому такое произведение надо считать в int.
+    left = "10000000000000000000000000000000000000000"
+    right = "10000000000000000000000000000000000"
+    assert evaluate(f"{left}*{right}") == int(left) * int(right)
+
+
 def test_empty_expression_is_rejected():
     with pytest.raises(CalculatorError, match="Пустое выражение"):
         evaluate("")

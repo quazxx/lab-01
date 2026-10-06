@@ -64,7 +64,25 @@ PYTHONPATH=src python -m toolkit --help
 PYTHONPATH=src python -m pytest
 ```
 
-Активация на Windows: `.venv\Scripts\activate`.
+Активация на Windows:
+```shell
+git clone https://github.com/quazxx/lab-01.git
+```
+Из папки (`lab_01`):
+```shell
+python -m venv .venv
+.venv\Scripts\activate
+pip install -e .
+pip install pytest ruff mypy
+python -m toolkit --help
+python -m toolkit calc "2 + 3 * 4"
+python -m pytest
+```
+
+В PowerShell:
+```shell
+.venv\Scripts\Activate.ps1
+```
 
 ## Файлы
 

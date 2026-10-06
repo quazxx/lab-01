@@ -28,13 +28,15 @@ python -m toolkit --help
 
 ## Инструкция по запуску
 
+```shell
+git clone https://github.com/quazxx/lab-01.git
+```
 Из папки (`lab_01`):
 
 ```shell
 uv venv
 source .venv/bin/activate
 uv sync
-pre-commit install
 ```
 
 Проверка:
